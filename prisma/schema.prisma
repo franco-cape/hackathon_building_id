@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model algorithm_detections {
+  id              Int               @id @default(autoincrement()) @db.SmallInt
+  ssgeom_version  String            @db.VarChar
+  parcel_schema   String            @db.VarChar
+  roof_detections roof_detections[]
+
+  @@unique([ssgeom_version, parcel_schema])
+}
+
+model algorithm_representations {
+  id                   Int                    @id @default(autoincrement()) @db.SmallInt
+  description          String                 @unique @db.VarChar
+  roof_representations roof_representations[]
+}
+
+model association_metrics {
+  id                           Int                            @id @default(autoincrement()) @db.SmallInt
+  name                         String                         @unique @db.VarChar
+  roof_detections_associations roof_detections_associations[] @ignore
+}
+
+model buildings {
+  id                           BigInt                         @id @default(autoincrement())
+  external_id                  String                         @db.VarChar
+  cape_created_date            DateTime                       @db.Date
+  cape_deleted_date            DateTime?                      @db.Date
+  first_seen                   DateTime                       @db.Date
+  last_seen                    DateTime                       @db.Date
+  last_pre_construction        DateTime?                      @db.Date
+  first_post_demolition        DateTime?                      @db.Date
+  bbox                         Unsupported("geometry")
+  tile18_x                     Int
+  tile18_y                     Int
+  roof_detections_associations roof_detections_associations[] @ignore
+  roof_detections_buildings    roof_detections_buildings[]
+  roof_representations         roof_representations[]
+
+  @@index([bbox], type: Gist)
+  @@index([external_id])
+  @@index([tile18_x, tile18_y], map: "buildings_tilexy_idx")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model mock_surveys_aois {
+  name String?                  @db.VarChar
+  geom Unsupported("geometry")?
+
+  @@ignore
+}
+
+model provider_datatypes {
+  id                        Int                         @id @default(autoincrement()) @db.SmallInt
+  name                      String                      @unique @db.VarChar
+  roof_detections           roof_detections[]
+  roof_detections_buildings roof_detections_buildings[]
+  roof_representations      roof_representations[]
+  tiles_segmented           tiles_segmented[]
+}
+
+model roof_detections {
+  id                                                                                                BigInt                         @id @default(autoincrement())
+  external_id                                                                                       String                         @db.VarChar
+  geom                                                                                              Unsupported("geometry")
+  geom_area                                                                                         Float                          @db.Real
+  tile18_x                                                                                          Int
+  tile18_y                                                                                          Int
+  cape_survey_id                                                                                    BigInt
+  provider_datatype_id                                                                              Int                            @db.SmallInt
+  algorithm_id                                                                                      Int                            @db.SmallInt
+  algorithm_detections                                                                              algorithm_detections           @relation(fields: [algorithm_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  surveys                                                                                           surveys                        @relation(fields: [cape_survey_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provider_datatypes                                                                                provider_datatypes             @relation(fields: [provider_datatype_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  roof_detections_associations_roof_detectionsToroof_detections_associations_past_roof_detection_id roof_detections_associations[] @relation("roof_detectionsToroof_detections_associations_past_roof_detection_id") @ignore
+  roof_detections_associations_roof_detectionsToroof_detections_associations_roof_detection_id      roof_detections_associations[] @relation("roof_detectionsToroof_detections_associations_roof_detection_id") @ignore
+  roof_detections_buildings                                                                         roof_detections_buildings[]
+
+  @@index([external_id])
+  @@index([geom], type: Gist)
+  @@index([tile18_x, tile18_y], map: "roof_detections_tilexy_idx")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model roof_detections_associations {
+  building_id                                                                          BigInt
+  roof_detection_id                                                                    BigInt
+  past_roof_detection_id                                                               BigInt
+  association_confidence                                                               String              @db.VarChar(1)
+  association_label                                                                    String              @db.VarChar
+  metric_id                                                                            Int                 @db.SmallInt
+  buildings                                                                            buildings           @relation(fields: [building_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  association_metrics                                                                  association_metrics @relation(fields: [metric_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  roof_detections_roof_detectionsToroof_detections_associations_past_roof_detection_id roof_detections     @relation("roof_detectionsToroof_detections_associations_past_roof_detection_id", fields: [past_roof_detection_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  roof_detections_roof_detectionsToroof_detections_associations_roof_detection_id      roof_detections     @relation("roof_detectionsToroof_detections_associations_roof_detection_id", fields: [roof_detection_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@ignore
+}
+
+model roof_detections_buildings {
+  roof_detection_id      BigInt
+  building_id            BigInt
+  provider_datatype_id   Int                @db.SmallInt
+  association_confidence String             @db.VarChar(1)
+  buildings              buildings          @relation(fields: [building_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provider_datatypes     provider_datatypes @relation(fields: [provider_datatype_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  roof_detections        roof_detections    @relation(fields: [roof_detection_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([building_id, roof_detection_id])
+}
+
+model roof_representations {
+  id                        BigInt                    @id @default(autoincrement())
+  external_id               String                    @db.VarChar
+  cape_created_date         DateTime                  @db.Date
+  cape_deleted_date         DateTime?                 @db.Date
+  representation_date       DateTime                  @db.Date
+  geom                      Unsupported("geometry")
+  geom_area                 Float                     @db.Real
+  tile18_x                  Int
+  tile18_y                  Int
+  cape_survey_id            BigInt
+  provider_datatype_id      Int                       @db.SmallInt
+  algorithm_id              Int                       @db.SmallInt
+  building_id               BigInt
+  algorithm_representations algorithm_representations @relation(fields: [algorithm_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  buildings                 buildings                 @relation(fields: [building_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  surveys                   surveys                   @relation(fields: [cape_survey_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provider_datatypes        provider_datatypes        @relation(fields: [provider_datatype_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([building_id])
+  @@index([cape_created_date, cape_deleted_date], map: "roof_representations_createdelete_idx")
+  @@index([external_id])
+  @@index([geom], type: Gist)
+  @@index([tile18_x, tile18_y], map: "roof_representations_tilexy_idx")
+}
+
+model surveys {
+  id                   BigInt                 @id
+  image_date           DateTime               @db.Date
+  tile18_total         Int
+  tile18_assimilated   Int
+  roof_detections      roof_detections[]
+  roof_representations roof_representations[]
+  tiles_segmented      tiles_segmented[]
+}
+
+model tiles_segmented {
+  id                   BigInt             @id @default(autoincrement())
+  tile18_x             Int
+  tile18_y             Int
+  cape_survey_id       BigInt
+  provider_datatype_id Int                @db.SmallInt
+  assimilated          Boolean
+  surveys              surveys            @relation(fields: [cape_survey_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provider_datatypes   provider_datatypes @relation(fields: [provider_datatype_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([tile18_x, tile18_y], map: "tiles_segmented_tilexy_idx")
+}
