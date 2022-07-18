@@ -32,3 +32,10 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+### After setting up this repo
+
+- create an `.env.development.local` file with a `DATABASE_URL`
+- to build the url follow [the postgresql connection url](https://www.prisma.io/docs/concepts/database-connectors/postgresql#connection-url) steps
+- run `npm run dev`
+- in Postman or browser get: `http://localhost:3000/api/creations?limit=200&page=1`
