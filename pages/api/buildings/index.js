@@ -1,17 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { PrismaClient } from "@prisma/client";
-import "../../prisma/patch";
+import "../../../prisma/patch";
 
 const prisma = new PrismaClient();
 // use `prisma` in your application to read and write data in your DB
 export default async function handler({ method, query }, res) {
+  const lng = Number(query.lng);
+  const lat = Number(query.lat);
+  const distance = Number(query.distance) || 0.001;
 
-  
-  const lng=Number(query.lng)
-  const lat=Number(query.lat)
-  const distance=Number(query.distance) || 0.001
-
-  console.log('Coordinates:', [lng, lat])
+  console.log("Coordinates:", [lng, lat]);
 
   switch (method) {
     case "GET":
@@ -33,7 +31,6 @@ export default async function handler({ method, query }, res) {
         ORDER BY rdb2.building_id          
         `;
 
-
         const responseLength = buildings.length;
         res.status(200).json({
           count: responseLength,
@@ -41,7 +38,7 @@ export default async function handler({ method, query }, res) {
           data: buildings,
         });
       } catch (e) {
-        console.error(e)
+        console.error(e);
         res.status(200).json({ error: e });
       }
       break;
