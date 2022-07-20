@@ -10,13 +10,13 @@ function Sidebar({elems, onClickItem}) {
         return elems.map((x) => {
             return  ( 
                 <Text style={{cursor:'pointer'}} onClick={() => onClickItem(x)} size={20}>
-                    {x}
+                    {x.building_id}
                 </Text>
             )
         });
     }
     return (
-        <Col css={{ w: '400px' }}>
+        <Col css={{ w: '400px', h: '100vh' }}>
             <Spacer y={1} />
             <Text size={20} weight={'bold'}>Cape Building ID Demo</Text>
             <Spacer y={1} />
