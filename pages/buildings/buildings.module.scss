@@ -1,4 +1,19 @@
 .container{
+    max-width: 1200px;
+    margin: auto;
     display: grid;
-    grid-template-columns: auto auto auto auto auto;
+    grid-template-columns: auto ;
+
+    @media (min-width: 768px)  {
+        grid-template-columns: auto auto auto;
+    }
+    @media (min-width: 1024px)  {
+        grid-template-columns: auto auto auto auto;
+    }
+
+    div {
+        background-color: #ccc;
+        height: 12rem;
+        margin: .5rem;
+    }
 }
