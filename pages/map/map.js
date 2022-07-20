@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useRef, useEffect } from 'react';
 
-const Map = ({elems}) => {
+const Map = ({elems, onClickItem}) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
 
@@ -37,8 +37,12 @@ const Map = ({elems}) => {
                     'paint': {
                     'fill-color': '#0080ff', // blue color fill
                     'fill-opacity': 0.5
+                    
                     }
                 });
+                map.current.on('click', building.building_id, () => {
+                    onClickItem(building);
+                })
             }
         })
     }, [elems])
