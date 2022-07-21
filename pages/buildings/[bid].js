@@ -1,37 +1,62 @@
 import styles from "./buildings.module.scss";
-import Map from "../../components/Map";
-import { useRouter } from 'next/router'
+import Map from "../map/map";
+import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Building() {
-  const router = useRouter()
-  const { bid } = router.query
-  const [buildings, setBuildings] = useState([]);
-  useEffect(() => {
-    if(router.isReady) {
-      getBuilding();
-    }
-  }, [router.isReady]);
+    const router = useRouter();
+    const { bid } = router.query;
+    const [buildings, setBuildings] = useState([]);
+    const [selectedBuilding, setSelectedBuilding] = useState(null);
 
-  const getBuilding = async () => {
-    const buildingResult = await axios.get(
-      `http://localhost:3000/api/buildings/${bid}`
+    const getBuilding = async () => {
+        const buildingResult = await axios.get(
+            `http://localhost:3000/api/buildings/${bid}`
+        );
+        setBuildings(buildingResult?.data?.data);
+        setSelectedBuilding(buildingResult?.data?.data[0]);
+    };
+
+    useEffect(() => {
+        if (router.isReady) {
+            getBuilding();
+        }
+    }, [router.isReady]);
+
+    const selectMap = (idx) => {
+        setSelectedBuilding(buildings[idx]);
+    };
+
+    const renderSurveys = () =>
+        buildings?.map((b, idx) => (
+            <div
+                key={idx}
+                data-buildingId={b.building_id}
+                className={styles.tile}
+                onClick={() => selectMap(idx)}
+            >
+                <p>Image date: {b.sv_image_date}</p>
+            </div>
+        ));
+
+    const mapStyles = {
+        height: "400px",
+        width: "100%",
+    };
+
+    return (
+        <div className={styles.container}>
+            <section className={styles.map}>
+                {selectedBuilding ? (
+                    <Map customStyle={mapStyles} elems={[selectedBuilding]} />
+                ) : (
+                    <p>loading...</p>
+                )}
+            </section>
+            <section className={styles.history}>
+                {buildings.length ? renderSurveys() : <p>Loading surveys...</p>}
+            </section>
+        </div>
     );
-
-    setBuildings(buildingResult?.data?.data);
-    console.log(buildingResult?.data?.data);
-  }
-
-  const getMaps = () => buildings.map((b, idx) => <Map key={idx} building={b} id={b.cape_survey_id} />)
-
-  return (
-    <div className={styles.container}>
-      {getMaps()}
-      {/* <Map key={1} building={buildings[0]} />
-      <Map key={2} building={buildings[1]} />
-      <Map key={3} building={buildings[2]} />
-      <Map key={4} building={buildings[3]} /> */}
-    </div>
-  );
 }
