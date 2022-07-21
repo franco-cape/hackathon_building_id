@@ -12,8 +12,11 @@ const Map = ({ elems, customStyle }) => {
             container: mapContainer.current,
             style: "mapbox://styles/mapbox/light-v10",
             center: [-96.69771726896862, 32.91303284263627], // center map on Chad
-            zoom: 18,
+            zoom: 17,
         });
+    }, [elems]);
+
+    useEffect(() => {
         map.current.on("load", function () {
             map.current.resize();
             elems.forEach((building) => {
