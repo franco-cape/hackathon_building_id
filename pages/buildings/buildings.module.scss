@@ -1,0 +1,33 @@
+.container{
+    display: grid;
+    grid-template-rows: 400px auto ;
+}
+
+.history{
+  display: flex;
+  flex-direction: column;  
+
+  & > div{
+    padding: 1rem;
+  }
+}
+.tileWrapper{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+}
+.tile{
+    width: 10rem;
+    height: 10rem;
+    background-color: #ccc;
+    padding: .5rem;
+
+    &:hover{
+        cursor: pointer;
+        background-color: #aeaeae;
+    }
+    &.active{
+        background-color: #82c0f8;
+    }
+}

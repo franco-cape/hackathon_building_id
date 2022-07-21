@@ -1,27 +1,23 @@
 import React from "react";
-import {
-  Col,
-  Spacer,
-  Text,
-} from "@nextui-org/react";
+import Link from "next/link";
+import { Spacer } from "@nextui-org/react";
+import styles from "./Sidebar.module.scss";
 
-function Sidebar({elems, onClickItem}) {
+function Sidebar({ elems = [] }) {
     const getItems = () => {
-        return elems.map((x) => {
-            return  ( 
-                <Text style={{cursor:'pointer'}} onClick={() => onClickItem(x)} size={20}>
-                    {x.building_id}
-                </Text>
-            )
+        return elems.map((x, idx) => {
+            return (
+                <Link key={idx} size={20} href={`/buildings/${x.building_id}`}>
+                    <a>{x.building_id}</a>
+                </Link>
+            );
         });
-    }
+    };
     return (
-        <Col css={{ w: '400px', h: '100vh' }}>
+        <div className={styles.sideBar}>
             <Spacer y={1} />
-            <Text size={20} weight={'bold'}>Cape Building ID Demo</Text>
-            <Spacer y={1} />
-            {getItems()}
-        </Col> 
+            <div className={styles.navLinks}>{getItems()}</div>
+        </div>
     );
 }
 

@@ -1,0 +1,13 @@
+.sideBar{
+    padding: 0 1rem;
+}
+.navLinks{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: auto;
+
+    a:hover{
+        background-color: #ccc;
+    }
+}
