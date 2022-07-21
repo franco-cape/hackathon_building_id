@@ -44,7 +44,11 @@ function Building() {
             <div
                 key={idx}
                 data-buildingId={b.building_id}
-                className={styles.tile}
+                className={`${styles.tile} ${
+                    b.cape_survey_id === selectedBuilding.cape_survey_id
+                        ? styles.active
+                        : ""
+                }`}
                 onClick={() => selectMap(idx)}
             >
                 <p>Survey date</p>
@@ -67,7 +71,18 @@ function Building() {
                 )}
             </section>
             <section className={styles.history}>
-                {buildings.length ? renderSurveys() : <p>Loading surveys...</p>}
+                {selectedBuilding && (
+                    <div>
+                        <h4>Building ID: {selectedBuilding.building_id}</h4>
+                    </div>
+                )}
+                <div className={styles.tileWrapper}>
+                    {buildings.length ? (
+                        renderSurveys()
+                    ) : (
+                        <p>Loading surveys...</p>
+                    )}
+                </div>
             </section>
         </div>
     );
