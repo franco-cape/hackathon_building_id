@@ -1,5 +1,4 @@
 import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
 import { useRef, useEffect } from "react";
 
 const Map = ({ elems, customStyle }) => {

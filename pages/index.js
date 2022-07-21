@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import Head from "next/head";
-import Image from "next/image";
+import DefaultTemplate from "../components/Template";
 import Sidebar from "../components/sidebar";
 import styles from "../styles/Home.module.css";
 import Map from "./map/map";
 import axios from "axios";
 
-export default function Home() {
+function Home() {
     const [buildings, setBuildings] = useState([]);
     const onClickItem = (x) => {
         console.log(x);
@@ -28,3 +27,7 @@ export default function Home() {
         </div>
     );
 }
+
+Home = DefaultTemplate(Home);
+
+export default Home;

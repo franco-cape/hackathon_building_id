@@ -3,8 +3,9 @@ import Map from "../map/map";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import DefaultTemplate from "../../components/Template";
 
-export default function Building() {
+function Building() {
     const router = useRouter();
     const { bid } = router.query;
     const [buildings, setBuildings] = useState([]);
@@ -28,6 +29,16 @@ export default function Building() {
         setSelectedBuilding(buildings[idx]);
     };
 
+    const formatDate = (customDate) => {
+        let options = {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+        };
+        const d = new Date(customDate);
+        return `${d.toLocaleString("en-US", options)}`;
+    };
+
     const renderSurveys = () =>
         buildings?.map((b, idx) => (
             <div
@@ -36,7 +47,8 @@ export default function Building() {
                 className={styles.tile}
                 onClick={() => selectMap(idx)}
             >
-                <p>Image date: {b.sv_image_date}</p>
+                <p>Survey date</p>
+                <p>{formatDate(b.sv_image_date)}</p>
             </div>
         ));
 
@@ -60,3 +72,7 @@ export default function Building() {
         </div>
     );
 }
+
+Building = DefaultTemplate(Building);
+
+export default Building;

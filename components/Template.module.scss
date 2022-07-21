@@ -1,0 +1,11 @@
+.mainNav{
+    height: 50px;
+    background-color: #0c2b47;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & a {
+        color: #fff;
+    }
+}
