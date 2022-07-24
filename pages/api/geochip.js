@@ -13,9 +13,9 @@ export default async function handler({ method, query }, res) {
         case "GET":
             try {
                 const geo = await getGeochip(query);
-                res.status(200).json(
-                    Buffer.from(geo.data, "binary").toString("base64")
-                );
+                res.status(200).json({
+                    image: Buffer.from(geo.data, "binary").toString("base64"),
+                });
             } catch (e) {
                 res.status(200).json({ error: e });
             }

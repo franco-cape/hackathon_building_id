@@ -21,13 +21,27 @@
     width: 10rem;
     height: 10rem;
     background-color: #ccc;
-    padding: .5rem;
+    position: relative;
 
     &:hover{
         cursor: pointer;
-        background-color: #aeaeae;
     }
     &.active{
-        background-color: #82c0f8;
+        & .subtitle{
+            background-color: rgba(141, 41, 194, 0.5);
+        }
+    }
+
+    .subtitle{
+        position:absolute;
+        top: 0;
+        width: 100%;
+        background-color: rgba(0,0,0,.5);
+        color: #fff;
+        z-index: 5;
+        font-size: .75rem;
+        padding: .5rem;
+        display: flex;
+        flex-direction: column;
     }
 }

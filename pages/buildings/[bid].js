@@ -10,6 +10,7 @@ function Building() {
     const router = useRouter();
     const { bid } = router.query;
     const [buildings, setBuildings] = useState([]);
+    const [imagesLoaded, setImagesLoaded] = useState(false);
     const [selectedBuilding, setSelectedBuilding] = useState(null);
 
     const getGeochip = async (building) => {
@@ -50,6 +51,7 @@ function Building() {
         const buildingsWithImages = await Promise.all(images);
 
         setBuildings(buildingsWithImages);
+        setImagesLoaded(true);
     };
 
     useEffect(() => {
@@ -74,6 +76,7 @@ function Building() {
 
     const renderSurveys = () =>
         buildings?.map((b, idx) => {
+            console.log(b.image);
             return (
                 <div
                     key={idx}
@@ -85,7 +88,16 @@ function Building() {
                     }`}
                     onClick={() => selectMap(idx)}
                 >
-                    <Image src={b.image} alt={b.sv_image_date} />
+                    <div className={styles.subtitle}>
+                        <span>Survey date:</span>
+                        <span>{formatDate(b.sv_image_date)}</span>
+                    </div>
+                    <Image
+                        src={`data:image/png;base64,${b.image}`}
+                        alt={b.sv_image_date}
+                        width="160"
+                        height="160"
+                    />
                 </div>
             );
         });
@@ -111,7 +123,7 @@ function Building() {
                     </div>
                 )}
                 <div className={styles.tileWrapper}>
-                    {buildings.length ? (
+                    {buildings.length && imagesLoaded ? (
                         renderSurveys()
                     ) : (
                         <p>Loading surveys...</p>
