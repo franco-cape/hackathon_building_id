@@ -1,7 +1,7 @@
 import mapboxgl from "mapbox-gl";
-import { useRef, useEffect } from "react";
+import {useRef, useEffect} from "react";
 
-const Map = ({ elems, customStyle }) => {
+const Map = ({elems, customStyle}) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
 
@@ -15,7 +15,7 @@ const Map = ({ elems, customStyle }) => {
             container: mapContainer.current,
             style: "mapbox://styles/mapbox/light-v10",
             center: centroid, // center map on Chad
-            zoom: 17,
+            zoom: 19,
         });
     }, [elems]);
 
@@ -44,12 +44,21 @@ const Map = ({ elems, customStyle }) => {
                             "fill-opacity": 0.5,
                         },
                     });
+                    map.current.addLayer({
+                        id: `${building.building_id}-label`,
+                        source: building.building_id, // reference the data source
+                        type: "symbol",
+                        layout: {
+                            'text-field': building.building_id,
+                            'text-size': 12
+                        }
+                    })
                 }
             });
         });
     }, [elems]);
 
-    return <div style={customStyle || MapStyles.map} ref={mapContainer} />;
+    return <div style={customStyle || MapStyles.map} ref={mapContainer}/>;
 };
 
 const MapStyles = {
