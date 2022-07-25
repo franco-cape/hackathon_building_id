@@ -5,12 +5,16 @@ const Map = ({ elems, customStyle }) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
 
+
     useEffect(() => {
+
+        const centroid = elems.length && JSON.parse(elems[0].centroid).coordinates || [-96.69771726896862, 32.91303284263627]
+
         mapboxgl.accessToken = process.env.MAPBOX_API_KEY ?? "";
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: "mapbox://styles/mapbox/light-v10",
-            center: [-96.69771726896862, 32.91303284263627], // center map on Chad
+            center: centroid, // center map on Chad
             zoom: 17,
         });
     }, [elems]);
