@@ -1,17 +1,21 @@
 import mapboxgl from "mapbox-gl";
-import { useRef, useEffect } from "react";
+import {useRef, useEffect} from "react";
 
-const Map = ({ elems, customStyle }) => {
+const Map = ({elems, customStyle}) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
 
+
     useEffect(() => {
+
+        const centroid = elems.length && JSON.parse(elems[0].centroid).coordinates || [-96.69771726896862, 32.91303284263627]
+
         mapboxgl.accessToken = process.env.MAPBOX_API_KEY ?? "";
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: "mapbox://styles/mapbox/light-v10",
-            center: [-96.69771726896862, 32.91303284263627], // center map on Chad
-            zoom: 17,
+            center: centroid, // center map on Chad
+            zoom: 19,
         });
     }, [elems]);
 
@@ -40,12 +44,21 @@ const Map = ({ elems, customStyle }) => {
                             "fill-opacity": 0.5,
                         },
                     });
+                    map.current.addLayer({
+                        id: `${building.building_id}-label`,
+                        source: building.building_id, // reference the data source
+                        type: "symbol",
+                        layout: {
+                            'text-field': building.building_id,
+                            'text-size': 12
+                        }
+                    })
                 }
             });
         });
     }, [elems]);
 
-    return <div style={customStyle || MapStyles.map} ref={mapContainer} />;
+    return <div style={customStyle || MapStyles.map} ref={mapContainer}/>;
 };
 
 const MapStyles = {
