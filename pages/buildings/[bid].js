@@ -61,6 +61,8 @@ function Building() {
     }, [router.isReady]);
 
     const selectMap = (idx) => {
+        console.log("yee");
+
         setSelectedBuilding(buildings[idx]);
     };
 
@@ -76,7 +78,6 @@ function Building() {
 
     const renderSurveys = () =>
         buildings?.map((b, idx) => {
-            console.log(b.image);
             return (
                 <div
                     key={idx}
