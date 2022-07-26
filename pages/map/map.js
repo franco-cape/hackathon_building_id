@@ -4,59 +4,73 @@ import {useRef, useEffect} from "react";
 const Map = ({elems, customStyle}) => {
     const mapContainer = useRef(null);
     const map = useRef(null);
+    const centroid = useRef(null);
 
+    const addGeometries = (geoms) => {
+        geoms.forEach((building) => {
+            if (
+                map.current && 
+                !map.current.getLayer(building.building_id)
+            ) {
+                map.current.addSource(building.building_id, {
+                    type: "geojson",
+                    data: {
+                        type: "Feature",
+                        geometry: JSON.parse(building.st_asgeojson),
+                    },
+                });
+                map.current.addLayer({
+                    id: building.building_id,
+                    type: "fill",
+                    source: building.building_id, // reference the data source
+                    layout: {},
+                    paint: {
+                        "fill-color": "#0080ff", // blue color fill
+                        "fill-opacity": 0.5,
+                    },
+                });
+                map.current.addLayer({
+                    id: `${building.building_id}-label`,
+                    source: building.building_id, // reference the data source
+                    type: "symbol",
+                    layout: {
+                        'text-field': building.building_id,
+                        'text-size': 12
+                    }
+                })
+            }
+        });
+    }
 
     useEffect(() => {
-
-        const centroid = elems.length && JSON.parse(elems[0].centroid).coordinates || [-96.69771726896862, 32.91303284263627]
-
         mapboxgl.accessToken = process.env.MAPBOX_API_KEY ?? "";
         map.current = new mapboxgl.Map({
             container: mapContainer.current,
             style: "mapbox://styles/mapbox/light-v10",
-            center: centroid, // center map on Chad
             zoom: 19,
         });
-    }, [elems]);
 
-    useEffect(() => {
-        map.current.on("load", function () {
+        const loadFn = function () {
+            if(!centroid.current) return;
+
+            map.current.flyTo({center: centroid.current});
             map.current.resize();
-            elems.forEach((building) => {
-                if (
-                    map.current &&
-                    !map.current.getLayer(building.building_id)
-                ) {
-                    map.current.addSource(building.building_id, {
-                        type: "geojson",
-                        data: {
-                            type: "Feature",
-                            geometry: JSON.parse(building.st_asgeojson),
-                        },
-                    });
-                    map.current.addLayer({
-                        id: building.building_id,
-                        type: "fill",
-                        source: building.building_id, // reference the data source
-                        layout: {},
-                        paint: {
-                            "fill-color": "#0080ff", // blue color fill
-                            "fill-opacity": 0.5,
-                        },
-                    });
-                    map.current.addLayer({
-                        id: `${building.building_id}-label`,
-                        source: building.building_id, // reference the data source
-                        type: "symbol",
-                        layout: {
-                            'text-field': building.building_id,
-                            'text-size': 12
-                        }
-                    })
-                }
-            });
-        });
-    }, [elems]);
+            if(elems?.length > 0){
+                addGeometries(elems);
+            }
+        }
+        map.current.on("style.load", loadFn);
+    }, []);
+    
+    useEffect(() => {
+        if(elems?.length > 0 && elems[0]) {
+            let center = elems.length > 0 && JSON.parse(elems[0]?.centroid)?.coordinates || [-96.69771726896862, 32.91303284263627]
+            console.log(center)
+            centroid.current = center;
+            map.current.flyTo({center: center, zoom: 18});
+            addGeometries(elems);
+        }
+    }, [elems])
 
     return <div style={customStyle || MapStyles.map} ref={mapContainer}/>;
 };

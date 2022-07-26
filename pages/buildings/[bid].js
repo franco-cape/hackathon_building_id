@@ -110,11 +110,7 @@ function Building() {
     return (
         <div className={styles.container}>
             <section className={styles.map}>
-                {selectedBuilding ? (
-                    <Map customStyle={mapStyles} elems={[selectedBuilding]} />
-                ) : (
-                    <p>loading...</p>
-                )}
+                <Map customStyle={mapStyles} elems={[selectedBuilding]} />
             </section>
             <section className={styles.history}>
                 {selectedBuilding && (
