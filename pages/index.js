@@ -13,8 +13,10 @@ function Home() {
     };
     useEffect(() => {
         const fetchBuildings = async () => {
+
+            // 33.768127, -112.068247
             const buildings_ = await axios.get(
-                "http://localhost:3000/api/buildings?lng=-96.69771726896862&lat=32.91303284263627"
+                "http://localhost:3000/api/buildings?lng=-112.068247&lat=33.768127"
             );
             setBuildings(buildings_?.data?.data);
         };

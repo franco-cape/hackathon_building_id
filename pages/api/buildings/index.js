@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export default async function handler({ method, query }, res) {
   const lng = Number(query.lng);
   const lat = Number(query.lat);
-  const distance = Number(query.distance) || 0.001;
+  const distance = Number(query.distance) || 0.01;
 
   console.log("Coordinates:", [lng, lat]);
 

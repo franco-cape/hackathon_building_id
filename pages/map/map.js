@@ -8,7 +8,8 @@ const Map = ({elems, customStyle}) => {
 
     useEffect(() => {
 
-        const centroid = elems.length && JSON.parse(elems[0].centroid).coordinates || [-96.69771726896862, 32.91303284263627]
+// -112.068247, 33.768127
+        const centroid = elems.length && JSON.parse(elems[0].centroid).coordinates || [-112.068247, 33.768127]
 
         mapboxgl.accessToken = process.env.MAPBOX_API_KEY ?? "";
         map.current = new mapboxgl.Map({
