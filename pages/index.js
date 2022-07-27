@@ -4,6 +4,7 @@ import Sidebar from "../components/sidebar";
 import styles from "../styles/Home.module.css";
 import Map from "./map/map";
 import axios from "axios";
+import { coordinates } from "../utils/contants";
 
 function Home() {
     const [buildings, setBuildings] = useState([]);
@@ -14,7 +15,7 @@ function Home() {
     useEffect(() => {
         const fetchBuildings = async () => {
             const buildings_ = await axios.get(
-                "http://localhost:3000/api/buildings?lng=-96.69771726896862&lat=32.91303284263627"
+                `http://localhost:3000/api/buildings?lng=${coordinates.lng}&lat=${coordinates.lat}`
             );
             setBuildings(buildings_?.data?.data);
         };
